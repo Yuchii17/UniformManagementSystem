@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Page</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <link rel="stylesheet" href="/css/Register.css">
+</head>
+<body>
+<div class="register-container">
+  <div class="left-column">
+    <h2>Welcome to Our Community!</h2>
+    <p class="mt-3">Join our growing network and unlock exclusive features, personalized experiences, and more. We’re thrilled to have you with us!</p>
+    <p class="small text-light opacity-75 mt-2">Create your account it only takes a minute!</p>
+  </div>
+  <div class="right-column">
+    <img src="/images/logo.jpg" alt="Logo" class="logo">
+    <h3 class="fw-bold text-primary text-center mb-4">Create Your Account</h3>
+    <div class="text-center"><p class="text-muted">Please fill out information below.</p></div>
+
+    <form id="registerForm" method="POST">
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label"><i class="bi bi-person-fill text-primary"></i> First Name</label>
+          <input type="text" class="form-control" name="firstName" maxlength="30" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><i class="bi bi-person-fill text-primary"></i> Last Name</label>
+          <input type="text" class="form-control" name="lastName" maxlength="30" required>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+          <label class="form-label"><i class="bi bi-envelope-fill text-primary"></i> Email Address</label>
+          <input type="email" class="form-control" name="email" required>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label"><i class="bi bi-phone-fill text-primary"></i> Phone Number</label>
+          <input type="tel" class="form-control" name="phone" maxlength="11" required>
+        </div>
+      </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-12">
+          <label class="form-label"><i class="bi bi-gender-ambiguous text-primary"></i> Gender</label>
+          <select class="form-select" name="gender" required>
+            <option value="" disabled selected>Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+
+      <div class="row g-3 mt-1">
+        <div class="col-md-6">
+            <label class="form-label"><i class="bi bi-book-fill text-primary"></i> Year Level</label>
+            <select class="form-select" name="yearLevel" required>
+            <option value="" disabled selected>Select Year Level</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label"><i class="bi bi-mortarboard-fill text-primary"></i> Course</label>
+            <select class="form-select" name="course" required>
+            <option value="" disabled selected>Select Course</option>
+            <option value="BSIT">BSIT</option>
+            <option value="BSHM">BSHM</option>
+            <option value="BSBA">BSBA</option>
+            <option value="BSED">BSED</option>
+            <option value="BSCRIM">BSCRIM</option>
+            <option value="BSA">BSA</option>
+            <option value="BSTM">BSTM</option>
+            </select>
+        </div>
+        </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="mt-3">
+            <label class="form-label"><i class="bi bi-lock-fill text-primary"></i> Password</label>
+            <div class="position-relative">
+              <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+              <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword" style="cursor: pointer;"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="mt-3">
+            <label class="form-label"><i class="bi bi-lock-fill text-primary"></i> Confirm Password</label>
+            <div class="position-relative">
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" minlength="6" required>
+              <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3" id="toggleConfirm" style="cursor: pointer;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-4">
+        <div class="form-check d-inline-flex align-items-center gap-2">
+          <input class="form-check-input mt-0" type="checkbox" id="termsCheckbox" disabled>
+          <label class="form-check-label fw-semibold" for="termsCheckbox" style="font-size: 0.95rem;">
+            I agree to the 
+            <a href="#" class="text-primary fw-bold" data-bs-toggle="modal" data-bs-target="#termsModal">Terms & Privacy Policy</a>
+          </label>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary w-50 mt-4 py-2 fw-semibold"><i class="bi bi-check-circle"></i> Register</button>
+      </div>
+      <div class="text-center">
+        <p class="text-muted">Already have an account? <a href="/login" id="log-btn">Login here.</a></p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal fade" id="termsModal" tabindex="-1" aria-hidden="true"> <div class="modal-dialog modal-dialog-scrollable"> 
+  <div class="modal-content"> <div class="modal-header"> 
+    <h5 class="modal-title fw-bold">Terms and Privacy Policy</h5> 
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button> 
+  </div> 
+
+  <div class="modal-body" id="termsContent" style="max-height: 400px; overflow-y: auto;">
+     <p>Welcome to the Uniform Management System (UMS). Please read these terms carefully before using our services.</p>
+    <p>1. <strong>Use of Service:</strong> This platform allows staff and administrators to manage uniform requests and inventory efficiently.</p> 
+    <p>2. <strong>Data Privacy:</strong> Your data is handled securely and used only for legitimate operational purposes.</p> 
+    <p>3. <strong>User Responsibilities:</strong> You agree to provide accurate information and keep your credentials confidential.</p> 
+    <p>4. <strong>Prohibited Actions:</strong> Any misuse, data manipulation, or unauthorized access will result in suspension or legal action.</p> 
+    <p>5. <strong>Updates:</strong> We may modify terms occasionally. Continued use means you accept the latest version.</p> 
+    <p>6. <strong>Termination:</strong> We reserve the right to terminate accounts that violate the above policies.</p> 
+    <p>Thank you for reading. Please scroll to the bottom and click “Agree” to proceed.</p> 
+  </div> 
+  
+  <div class="modal-footer"> 
+    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+     <button class="btn btn-primary" id="agreeBtn" disabled>Agree</button>
+     </div> 
+    </div> 
+  </div>
+ </div>
+
+<div class="modal fade" id="otpModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content shadow-lg border-0 rounded-4">
+      <div class="modal-header border-0 pb-0">
+        <h5 class="modal-title fw-bold text-primary w-100 text-center">Verify Your Email</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body px-4 pb-4 text-center">
+        <p class="text-muted mb-4">Enter the 6-digit OTP we sent to your email address to complete your registration.</p>
+        <div class="d-flex justify-content-center gap-2 mb-3" id="otpInputs">
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+          <input type="text" maxlength="1" class="otp-input form-control text-center" />
+        </div>
+        <p id="timerText" class="text-muted small mb-3"></p>
+        <button id="resendOtpBtn" class="btn btn-outline-primary w-100 fw-semibold" disabled>Resend OTP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/Register.js"></script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard | UMS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/Request.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+  <div id="sidebar">
+    <div>
+      <div class="brand">
+        <img src="/images/logo.jpg" alt="UMS Logo" />
+        <h5>Uniform Management System</h5>
+      </div>
+      <ul class="nav flex-column nav-links mt-3">
+        <li class="nav-item">
+          <a href="/user/index" class="nav-link">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/request" class="nav-link active">
+            <i class="bi bi-file-earmark-text"></i> Request Uniform
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/requests" class="nav-link">
+            <i class="bi bi-list-check"></i> My Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/user/profile" class="nav-link">
+            <i class="bi bi-person-lines-fill"></i> Profile
+          </a>
+        </li>
+      </ul>
+    </div>
+    <div class="sidebar-footer">
+      <button id="logoutBtn" class="logout-btn d-flex align-items-center justify-content-center gap-2">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h2>Available Uniforms</h2>
+    <hr>
+    <div class="container mt-4">
+      <div class="row">
+        <% if (uniforms && uniforms.length > 0) { %>
+          <% uniforms.forEach(uniform => { %>
+            <div class="col-md-4 mb-4">
+              <div class="card shadow-sm border-0 h-100">
+                <img src="<%= uniform.image %>" alt="Uniform" class="card-img-top" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h5 class="card-title"><%= uniform.category %> - <%= uniform.type %></h5>
+                  <p class="card-text">
+                    <strong>Gender:</strong> <%= uniform.gender %><br>
+                    <strong>Size:</strong> <%= uniform.size %><br>
+                    <% if (uniform.yearLevel) { %>
+                      <strong>Year Level:</strong> <%= uniform.yearLevel %><br>
+                    <% } %>
+                  </p>
+                  <button class="btn btn-primary w-100 request-btn" 
+                    data-id="<%= uniform._id %>" 
+                    data-category="<%= uniform.category %>"
+                    data-type="<%= uniform.type %>"
+                    data-size="<%= uniform.size %>"
+                    data-gender="<%= uniform.gender %>"
+                    data-year="<%= uniform.yearLevel || 'N/A' %>"
+                    data-image="<%= uniform.image %>">Request This Uniform</button>
+                </div>
+              </div>
+            </div>
+          <% }); %>
+        <% } else { %>
+          <p class="text-muted text-center">No <%= session.user.gender %> uniforms available at the moment.</p>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="uniformModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-primary text-white rounded-top-4">
+          <h5 class="modal-title fw-semibold">
+            <i class="bi bi-check2-circle me-2"></i> Confirm Uniform Request
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div class="text-center mb-4">
+            <img id="uniformImage" src="" class="img-fluid rounded-3 shadow-sm" style="max-height:220px;object-fit:cover;">
+          </div>
+
+          <div class="list-group shadow-sm rounded-3 mb-3">
+            <div class="list-group-item d-flex align-items-center">
+              <i class="bi bi-tags-fill text-primary fs-5 me-3"></i>
+              <div>
+                <strong>Category:</strong> <span id="uniformCategory"></span>
+              </div>
+            </div>
+            <div class="list-group-item d-flex align-items-center">
+              <i class="bi bi-shirt text-success fs-5 me-3"></i>
+              <div>
+                <strong>Type:</strong> <span id="uniformType"></span>
+              </div>
+            </div>
+            <div class="list-group-item d-flex align-items-center">
+              <i class="bi bi-rulers text-warning fs-5 me-3"></i>
+              <div>
+                <strong>Size:</strong> <span id="uniformSize"></span>
+              </div>
+            </div>
+            <div class="list-group-item d-flex align-items-center">
+              <i class="bi bi-gender-ambiguous text-danger fs-5 me-3"></i>
+              <div>
+                <strong>Gender:</strong> <span id="uniformGender"></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="orfUpload" class="form-label fw-semibold">
+              <i class="bi bi-upload text-primary me-2"></i> Upload Your ORF (JPG/PNG only)
+            </label>
+            <input type="file" id="orfUpload" accept=".jpg,.jpeg,.png" class="form-control">
+          </div>
+        </div>
+
+        <div class="modal-footer border-0 d-flex justify-content-between p-3">
+          <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i> Cancel
+          </button>
+          <button type="button" class="btn btn-primary px-4" id="confirmRequestBtn">
+            <i class="bi bi-send-check-fill me-1"></i> Confirm Request
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/Logout.js"></script>
+  <script>
+  let selectedUniformId = null;
+  let selectedRequestBtn = null; 
+  const modalElement = document.getElementById('uniformModal');
+  const modal = new bootstrap.Modal(modalElement);
+  const confirmBtn = document.getElementById('confirmRequestBtn');
+
+  document.querySelectorAll('.request-btn').forEach(button => {
+    button.addEventListener('click', () => {
+      selectedUniformId = button.getAttribute('data-id');
+      selectedRequestBtn = button;
+
+      document.getElementById('uniformImage').src = button.getAttribute('data-image');
+      document.getElementById('uniformCategory').textContent = button.getAttribute('data-category');
+      document.getElementById('uniformType').textContent = button.getAttribute('data-type');
+      document.getElementById('uniformSize').textContent = button.getAttribute('data-size');
+      document.getElementById('uniformGender').textContent = button.getAttribute('data-gender');
+
+      confirmBtn.disabled = false;
+      modal.show();
+    });
+  });
+
+  confirmBtn.addEventListener('click', async () => {
+    const fileInput = document.getElementById('orfUpload');
+    const file = fileInput.files[0];
+
+    if (!file) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Missing File',
+        text: 'Please upload your ORF before submitting your request.',
+        confirmButtonColor: '#0d6efd'
+      });
+      return;
+    }
+
+    if (!['image/jpeg', 'image/png'].includes(file.type)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Invalid File Type',
+        text: 'Only JPG or PNG files are allowed.',
+        confirmButtonColor: '#0d6efd'
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('uniformId', selectedUniformId);
+    formData.append('orfImage', file);
+
+    try {
+      confirmBtn.disabled = true;
+      const response = await fetch('/user/request-uniform', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+      modal.hide();
+
+      if (result.success) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: result.message,
+          confirmButtonColor: '#0d6efd'
+        });
+
+        if (selectedRequestBtn) {
+          selectedRequestBtn.disabled = true;
+          selectedRequestBtn.textContent = 'Requested';
+        }
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'Oops!',
+          text: result.message,
+          confirmButtonColor: '#0d6efd'
+        });
+        confirmBtn.disabled = false;
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong. Please try again.',
+        confirmButtonColor: '#0d6efd'
+      });
+      confirmBtn.disabled = false; 
+    }
+  });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,149 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="/css/Login.css">
+  </head>
+  <body>
+  <div class="login-container">
+    <div class="left-column">
+      <h2>Welcome Back!</h2>
+      <p class="mt-3">Access your account to continue managing your activities and stay connected.</p>
+      <p class="small text-light opacity-75 mt-2">Log in to continue your journey with us!</p>
+    </div>
+
+    <div class="right-column">
+      <img src="/images/logo.jpg" alt="Logo" class="logo">
+      <h3 class="fw-bold text-primary text-center mb-4">Login to Your Account</h3>
+      <div class="text-center"><p class="text-muted">Enter your credentials below.</p></div>
+
+      <form id="loginForm" method="POST">
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-envelope-fill text-primary"></i> Email Address</label>
+          <input type="email" class="form-control" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><i class="bi bi-lock-fill text-primary"></i> Password</label>
+          <div class="position-relative">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            <i class="bi bi-eye-slash position-absolute top-50 end-0 translate-middle-y me-3" id="togglePassword" style="cursor: pointer;"></i>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe">
+            <label class="form-check-label" for="rememberMe">Remember me</label>
+          </div>
+        <a href="#" class="text-primary text-decoration-none fw-semibold small" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+          Forgot Password?
+        </a>
+        </div>
+
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary w-50 mt-4 py-2 fw-semibold"><i class="bi bi-box-arrow-in-right"></i> Login</button>
+        </div>
+
+        <div class="text-center mt-4">
+          <p class="text-muted">Don't have an account? <a href="/register" class="fw-semibold text-primary">Register here</a></p>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- STEP 1: Forgot Password (Request OTP) -->
+  <div class="modal fade mt-5" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold text-primary" id="forgotPasswordModalLabel">Reset Password</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="forgotPasswordForm">
+            <div class="mb-3">
+              <label class="form-label"><i class="bi bi-envelope-fill text-primary"></i> Email Address</label>
+              <input type="email" class="form-control" id="forgotEmail" name="email" placeholder="Enter your email" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-semibold mt-3">Send OTP</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: OTP Verification Modal -->
+  <div class="modal fade mt-5" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content p-3">
+        <div class="modal-header border-0">
+          <h5 class="modal-title fw-bold text-primary" id="otpModalLabel">Enter OTP</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body text-center">
+          <p class="text-muted mb-3">We’ve sent a 6-digit OTP to your email. Please enter it below.</p>
+          <form id="otpForm">
+            <div class="d-flex justify-content-center gap-2 mb-3">
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+              <input type="text" maxlength="1" class="otp-input form-control text-center" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100 fw-semibold mt-3">Verify OTP</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal fade mt-5" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content p-3">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold text-primary" id="resetPasswordModalLabel">Change Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="resetPasswordForm">
+          <div class="mb-3 position-relative">
+            <label class="form-label"><i class="bi bi-lock-fill text-primary"></i> New Password</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="Enter new password" required>
+              <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
+                <i class="bi bi-eye-slash" id="toggleNewPassword"></i>
+              </span>
+            </div>
+          </div>
+
+          <div class="mb-3 position-relative">
+            <label class="form-label"><i class="bi bi-lock-fill text-primary"></i> Confirm Password</label>
+            <div class="input-group">
+              <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+              <span class="input-group-text bg-white border-start-0" style="cursor: pointer;">
+                <i class="bi bi-eye-slash" id="toggleConfirmPassword"></i>
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 fw-semibold mt-3">Update Password</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/Login.js"></script>
+  </body>
+  </html>
