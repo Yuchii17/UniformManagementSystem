@@ -11,6 +11,7 @@ const cookieParser = require('cookie-parser');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const userRoutes = require('./routes/userRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.set("view engine", "ejs");
 app.use('/', authRoutes);
 app.use('/', adminRoutes);
 app.use('/user', userRoutes);
+app.use('/notifications', notificationRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

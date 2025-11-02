@@ -1,3 +1,44 @@
+.history-table {
+  border: 1px solid #dee2e6;
+}
+
+.table-primary {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+.table-primary th {
+  font-weight: 600;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e9f3ff !important;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.input-group-text {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.pagination .page-link {
+  color: #007bff;
+}
+
+.pagination .page-link:hover {
+  background-color: #e9f3ff;
+}
+
     body {
       overflow-x: hidden;
       background-color: #f5f7fb;
@@ -113,49 +154,17 @@
     }
 
     hr {
-      border: none;
-      height: 4px;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #1e3a5f, #2563eb);
-      opacity: 0.6;
+      border: 0;
+      height: 1px;
+      background-color: #cbd5e1;
       margin: 25px 0;
     }
 
-    .kpi-cards {
-      margin-top: 20px;
-    }
-
-    .kpi-card {
-      background: linear-gradient(180deg, #1e3a5f 0%, #2b4c7e 100%);
-      color: #f1f1f1;
-      border: none;
-      border-radius: 12px;
-      padding: 20px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .kpi-card .card-title {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 5px;
-    }
-
-    .kpi-card .card-text {
-      font-weight: 700;
-    }
-
-    .kpi-icon {
-      font-size: 2.5rem;
-      opacity: 0.7;
-    }
-
-    @media (max-width: 768px) {
-      .kpi-card .card-body {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .kpi-icon {
-        margin-top: 10px;
-      }
-    }
+    hr {
+    border: none;
+    height: 4px;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #1e3a5f, #2563eb);
+    opacity: 0.6;
+    margin: 25px 0;
+  }

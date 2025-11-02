@@ -4,55 +4,51 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard | UMS</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/AdminDashboard.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-
   <div id="sidebar">
     <div>
       <div class="brand">
         <img src="/images/logo.jpg" alt="UMS Logo" />
         <h5>Uniform Management System</h5>
       </div>
-
-    <ul class="nav flex-column nav-links mt-3">
-    <li class="nav-item">
-        <a href="/admin/index" class="nav-link active">
-        <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="/admin/uniform" class="nav-link">
-        <i class="bi bi-plus-lg"></i> Add Uniform
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="/admin/collection" class="nav-link">
-        <i class="bi bi-collection"></i> Uniforms
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="/admin/account" class="nav-link">
-        <i class="bi bi-person-plus"></i> Account Creation
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="/admin/users" class="nav-link">
-        <i class="bi bi-people"></i> Users
-        </a>
-    </li>
-    <li class="nav-item">
-        <a href="/admin/request" class="nav-link">
-        <i class="bi bi-inbox"></i> Uniform Requests
-        </a>
-    </li>
-    </ul>
+      <ul class="nav flex-column nav-links mt-3">
+        <li class="nav-item">
+          <a href="/admin/index" class="nav-link active">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/uniform" class="nav-link">
+            <i class="bi bi-plus-lg"></i> Add Uniform
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/collection" class="nav-link">
+            <i class="bi bi-collection"></i> Uniforms
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/users" class="nav-link">
+            <i class="bi bi-people"></i> Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/request" class="nav-link">
+            <i class="bi bi-inbox"></i> Uniform Requests
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="/admin/history" class="nav-link">
+            <i class="bi bi-clock-history"></i> History
+          </a>
+        </li>
+      </ul>
     </div>
-
     <div class="sidebar-footer">
       <button id="logoutBtn" class="logout-btn d-flex align-items-center justify-content-center gap-2">
         <i class="bi bi-box-arrow-right"></i> Logout
@@ -60,116 +56,186 @@
     </div>
   </div>
 
-<div class="main-content">
-  <h2>Dashboard</h2>
-  <hr>
-
-  <div class="row mb-4">
-    <div class="col-md-4 mb-3">
-      <div class="card text-center shadow-sm p-3">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-people-fill"></i> Total Users</h5>
-          <p class="card-text fs-3"><%= totalUsers %></p>
+  <div class="main-content">
+    <h2>Dashboard</h2>
+    <hr>
+    <div class="row g-3 kpi-cards">
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Total Users</h5>
+              <p class="card-text text-light fs-3"><%= kpis.totalUsers %></p>
+            </div>
+            <i class="bi bi-people-fill kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Total Uniforms</h5>
+              <p class="card-text text-light fs-3"><%= kpis.totalUniforms %></p>
+            </div>
+            <i class="bi bi-shirt-fill kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Total Requests</h5>
+              <p class="card-text text-light  fs-3"><%= kpis.totalRequests %></p>
+            </div>
+            <i class="bi bi-inbox-fill kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Pending Requests</h5>
+              <p class="card-text text-light  fs-3"><%= kpis.pendingRequests %></p>
+            </div>
+            <i class="bi bi-hourglass-split kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Approved Requests</h5>
+              <p class="card-text text-light fs-3"><%= kpis.approvedRequests %></p>
+            </div>
+            <i class="bi bi-check-circle-fill kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Rejected Requests</h5>
+              <p class="card-text text-light fs-3"><%= kpis.rejectedRequests %></p>
+            </div>
+            <i class="bi bi-x-circle-fill kpi-icon"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title text-light">Cancelled Requests</h5>
+              <p class="card-text text-light fs-3"><%= kpis.cancelledRequests %></p>
+            </div>
+            <i class="bi bi-x-circle-fill kpi-icon text-light"></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow-sm kpi-card">
+          <div class="card-body d-flex align-items-center justify-content-between">
+            <div>
+              <h5 class="card-title">Completed Requests</h5>
+              <p class="card-text text-light fs-3"><%= kpis.completedRequests %></p>
+            </div>
+            <i class="bi bi-box-seam kpi-icon"></i>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-4 mb-3">
-      <div class="card text-center shadow-sm p-3">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-shirt"></i> Total Uniforms</h5>
-          <p class="card-text fs-3"><%= totalUniforms %></p>
+
+    <div class="row g-4 charts-light mt-3">
+      <div class="col-md-6">
+        <div class="card chart-card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title text-dark mb-3">
+              <i class="bi bi-mortarboard text-primary"></i> Users per Course
+            </h5>
+            <canvas id="courseChart" height="100"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card chart-card shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title text-dark mb-3">
+              <i class="bi bi-people text-success"></i> Users per Year Level
+            </h5>
+            <canvas id="yearChart" height="100"></canvas>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row mb-4">
-    <div class="col-md-12">
-      <div class="card shadow-sm p-3">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-graph-up"></i> User Growth</h5>
-          <canvas id="lineChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/Logout.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    const usersPerCourse = <%- JSON.stringify(usersPerCourse) %>;
+    const usersPerYear = <%- JSON.stringify(usersPerYear) %>;
 
-  <div class="row">
-    <div class="col-md-6 mb-4">
-      <div class="card shadow-sm p-3">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-book"></i> Users by Course</h5>
-          <canvas id="coursesChart"></canvas>
-        </div>
-      </div>
-    </div>
+    const blueGradient = (ctx) => {
+      const gradient = ctx.createLinearGradient(0, 0, 0, 250);
+      gradient.addColorStop(0, '#1e90ff');
+      gradient.addColorStop(1, '#0a58ca');
+      return gradient;
+    };
 
-    <div class="col-md-6 mb-4">
-      <div class="card shadow-sm p-3">
-        <div class="card-body">
-          <h5 class="card-title text-primary"><i class="bi bi-mortarboard-fill"></i> Users by Year Level</h5>
-          <canvas id="yearLevelChart"></canvas>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+    const commonOptions = {
+      plugins: { 
+        legend: { display: false },
+        title: { display: false }
+      },
+      scales: {
+        x: { ticks: { color: '#1a1a1a' }, grid: { color: '#e8e8e8' } },
+        y: { ticks: { color: '#1a1a1a', stepSize: 1 }, grid: { color: '#f0f0f0' } }
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+      }
+    };
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="/js/Logout.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const coursesData = <%- JSON.stringify({ labels: courses, data: courseCounts }) %>;
-  const yearData = <%- JSON.stringify({ labels: yearLevels, data: yearCounts }) %>;
-  const growthData = <%- JSON.stringify({ labels: growthLabels, data: growthCounts }) %>;
+    const courseCtx = document.getElementById('courseChart').getContext('2d');
+    new Chart(courseCtx, {
+      type: 'bar',
+      data: {
+        labels: usersPerCourse.map(c => c._id),
+        datasets: [{
+          label: 'Users',
+          data: usersPerCourse.map(c => c.count),
+          backgroundColor: blueGradient(courseCtx),
+          borderColor: '#0a58ca',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: commonOptions
+    });
 
-  const lineCtx = document.getElementById('lineChart').getContext('2d');
-  new Chart(lineCtx, {
-    type: 'line',
-    data: {
-      labels: growthData.labels,
-      datasets: [{
-        label: 'Total Users',
-        data: growthData.data,
-        backgroundColor: 'rgba(41, 128, 185,0.2)',
-        borderColor: 'rgba(41, 128, 185,1)',
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-        pointRadius: 4
-      }]
-    },
-    options: { responsive: true, plugins: { legend: { display: false } } }
-  });
-
-  const coursesCtx = document.getElementById('coursesChart').getContext('2d');
-  new Chart(coursesCtx, {
-    type: 'pie',
-    data: {
-      labels: coursesData.labels,
-      datasets: [{
-        data: coursesData.data,
-        backgroundColor: ['#1f77b4','#ff7f0e','#2ca02c','#d62728','#9467bd','#8c564b','#e377c2']
-      }]
-    },
-    options: { responsive: true }
-  });
-
-  const yearCtx = document.getElementById('yearLevelChart').getContext('2d');
-  new Chart(yearCtx, {
-    type: 'pie',
-    data: {
-      labels: yearData.labels,
-      datasets: [{
-        data: yearData.data,
-        backgroundColor: ['#1f77b4','#ff7f0e','#2ca02c','#d62728']
-      }]
-    },
-    options: { responsive: true }
-  });
-});
-</script>
-
+    const yearCtx = document.getElementById('yearChart').getContext('2d');
+    new Chart(yearCtx, {
+      type: 'bar',
+      data: {
+        labels: usersPerYear.map(y => y._id),
+        datasets: [{
+          label: 'Users',
+          data: usersPerYear.map(y => y.count),
+          backgroundColor: blueGradient(yearCtx),
+          borderColor: '#0a58ca',
+          borderWidth: 1,
+          borderRadius: 6
+        }]
+      },
+      options: commonOptions
+    });
+  </script>
 </body>
 </html>

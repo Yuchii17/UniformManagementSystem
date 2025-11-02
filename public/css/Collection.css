@@ -252,3 +252,17 @@ hr {
     width: 100% !important;
   }
 }
+    .uniform-card {
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .uniform-card:hover {
+      transform: translateY(-5px);
+    }
+    .uniform-img {
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }

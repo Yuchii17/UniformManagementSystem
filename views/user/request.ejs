@@ -49,30 +49,57 @@
   <div class="main-content">
     <h2>Available Uniforms</h2>
     <hr>
-    <div class="container mt-4">
-      <div class="row">
+
+    <div class="container mb-4">
+      <div class="row justify-content-center">
+        <div class="col-md-6 mb-2">
+          <input type="text" id="searchInput" class="form-control border-primary" placeholder="Search uniforms...">
+        </div>
+        <div class="col-md-3 mb-2">
+          <select id="categoryFilter" class="form-select border-primary">
+            <option value="">All Categories</option>
+            <option value="Academic">Academic</option>
+            <option value="PE">PE</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Department Shirt">Department Shirt</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="container mt-3">
+      <div class="row" id="uniformContainer">
         <% if (uniforms && uniforms.length > 0) { %>
           <% uniforms.forEach(uniform => { %>
-            <div class="col-md-4 mb-4">
+            <div class="col-md-4 mb-4 uniform-card" 
+                data-category="<%= uniform.category %>" 
+                data-gender="<%= uniform.gender %>" 
+                data-size="<%= uniform.size %>">
               <div class="card shadow-sm border-0 h-100">
                 <img src="<%= uniform.image %>" alt="Uniform" class="card-img-top" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                  <h5 class="card-title"><%= uniform.category %> - <%= uniform.type %></h5>
+                  <h5 class="card-title text-primary"><%= uniform.category %> - <%= uniform.type %></h5>
                   <p class="card-text">
                     <strong>Gender:</strong> <%= uniform.gender %><br>
                     <strong>Size:</strong> <%= uniform.size %><br>
-                    <% if (uniform.yearLevel) { %>
+
+                    <% if (uniform.category === 'Academic' || uniform.category === 'PE') { %>
+                      <strong>Year Level:</strong> 1st - 4th Year<br>
+                    <% } else if (uniform.yearLevel && uniform.yearLevel !== 'N/A') { %>
                       <strong>Year Level:</strong> <%= uniform.yearLevel %><br>
                     <% } %>
                   </p>
+
                   <button class="btn btn-primary w-100 request-btn" 
                     data-id="<%= uniform._id %>" 
                     data-category="<%= uniform.category %>"
                     data-type="<%= uniform.type %>"
                     data-size="<%= uniform.size %>"
                     data-gender="<%= uniform.gender %>"
-                    data-year="<%= uniform.yearLevel || 'N/A' %>"
-                    data-image="<%= uniform.image %>">Request This Uniform</button>
+                    data-year="<%= (uniform.category === 'Academic' || uniform.category === 'PE') ? '1st Year - 4th Year' : (uniform.yearLevel || 'N/A') %>"
+                    data-image="<%= uniform.image %>">
+                    Request This Uniform
+                  </button>
                 </div>
               </div>
             </div>
@@ -240,7 +267,36 @@
       confirmBtn.disabled = false; 
     }
   });
-  </script>
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const cards = document.querySelectorAll('.uniform-card');
+    const container = document.getElementById('uniformContainer');
 
+    const noResults = document.createElement('p');
+    noResults.textContent = 'No results found.';
+    noResults.className = 'text-muted text-center mt-4';
+    noResults.style.display = 'none';
+    container.parentNode.appendChild(noResults); 
+
+    function filterUniforms() {
+      const query = searchInput.value.toLowerCase();
+      const category = categoryFilter.value;
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const matchesSearch = text.includes(query);
+        const matchesCategory = !category || card.dataset.category === category;
+        const shouldShow = matchesSearch && matchesCategory;
+        card.style.display = shouldShow ? '' : 'none';
+        if (shouldShow) visibleCount++;
+      });
+
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    searchInput.addEventListener('keyup', filterUniforms);
+    categoryFilter.addEventListener('change', filterUniforms);
+  </script>
 </body>
 </html>

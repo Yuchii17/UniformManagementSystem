@@ -3,6 +3,7 @@ const { generateOTP, sendRegisterOTP, resendOTP, sendForgotPasswordOTP } = requi
 const bcrypt = require('bcryptjs');
 const Uniform = require('../models/Uniform')
 const UniformRequest = require('../models/UniformRequest');
+const Notification = require('../models/Notification');
 
 const OTP_EXPIRATION = 5 * 60 * 1000;
 
@@ -20,10 +21,35 @@ exports.showRegister = async (req, res) => {
 
 exports.showDashboard = async (req, res) => {
   try {
-    res.render('user/index', { session: req.session });
+    if (!req.session.user) return res.redirect("/login");
+
+    const userId = req.session.user._id;
+
+    const totalRequests = await UniformRequest.countDocuments({ user: userId });
+    const pending = await UniformRequest.countDocuments({ user: userId, status: "Pending" });
+    const approved = await UniformRequest.countDocuments({ user: userId, status: "Approved" });
+    const completed = await UniformRequest.countDocuments({ user: userId, status: "Completed" });
+
+    const notifications = await Notification.find({ user: userId })
+      .sort({ createdAt: -1 })
+      .populate('uniform', 'image');
+
+    const notificationsWithImage = notifications.map(n => ({
+      _id: n._id,
+      message: n.message,
+      isRead: n.isRead,
+      createdAt: n.createdAt,
+      uniformImage: n.uniform ? n.uniform.image : '/images/uniform.jpg'
+    }));
+
+    res.render("user/index", {
+      session: req.session,
+      stats: { totalRequests, pending, approved, completed },
+      notifications: notificationsWithImage
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).send('Failed to load user dashboard.');
+    console.error("Error loading dashboard:", error);
+    res.status(500).send("Failed to load user dashboard.");
   }
 };
 
@@ -62,16 +88,33 @@ exports.showRequestPage = async (req, res) => {
     if (!req.session.user) return res.redirect("/login");
 
     const userGender = req.session.user.gender;
+    const userYearLevel = req.session.user.yearLevel;
 
     const uniforms = await Uniform.find({
-      $or: [
-        { gender: userGender },
-        { gender: "Unisex" },
-        { gender: { $exists: false } }
-      ],
-      availability: "Available",
-      status: "Active"
-    }).sort({ category: 1, type: 1, size: 1 });
+      $and: [
+        {
+          $or: [
+            { gender: userGender },
+            { gender: "Unisex" },
+            { gender: { $exists: false } }
+          ]
+        },
+        {
+          $or: [
+            { category: "PE" },
+            { category: "Academic" },
+            {
+              $and: [
+                { category: { $in: ["Corporate", "Department Shirt"] } },
+                { yearLevel: userYearLevel }
+              ]
+            }
+          ]
+        },
+        { availability: "Available" },
+        { status: "Active" }
+      ]
+    }).sort({ category: 1, type: 1, size: 1, yearLevel: 1 });
 
     res.render("user/request", {
       session: req.session,
@@ -85,21 +128,57 @@ exports.showRequestPage = async (req, res) => {
 
 exports.viewRequests = async (req, res) => {
   try {
-    if (!req.session.user) {
-      return res.redirect('/login');
-    }
+    if (!req.session.user) return res.redirect('/login');
 
     const userId = req.session.user._id;
 
-    const requests = await UniformRequest.find({ user: userId })
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+
+    const search = req.query.search ? req.query.search.trim() : '';
+    const statusFilter = req.query.status ? req.query.status.trim().toLowerCase() : '';
+
+    let filter = { user: userId };
+
+    if (statusFilter) {
+      if (statusFilter === 'rejected') {
+        filter.status = { $in: ['Rejected', 'Processed'] };
+      } else {
+        filter.status = new RegExp(`^${statusFilter}$`, 'i');
+      }
+    }
+
+    if (search) {
+      filter.$or = [
+        { 'uniform.category': { $regex: search, $options: 'i' } },
+        { 'uniform.type': { $regex: search, $options: 'i' } },
+        { 'uniform.size': { $regex: search, $options: 'i' } },
+        { 'uniform.gender': { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const totalRequests = await UniformRequest.countDocuments(filter);
+
+    const totalPages = Math.ceil(totalRequests / limit);
+
+    const requests = await UniformRequest.find(filter)
       .populate('uniform')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean();
 
     res.render('user/requests', {
       title: 'My Uniform Requests',
       user: req.session.user,
-      requests
+      requests,
+      currentPage: page,
+      totalPages,
+      search,
+      statusFilter
     });
+
   } catch (error) {
     console.error('Error fetching uniform requests:', error);
     res.status(500).send('Server Error');

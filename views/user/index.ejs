@@ -4,14 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>User Dashboard | UMS</title>
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/Request.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    .modal-header {
+      background: linear-gradient(90deg, #1e3a5f, #2b4c7e);
+      color: white;
+    }
+
+    .notification-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.3s ease;
+    }
+
+    .notification-item:hover {
+      background-color: #f5f8ff;
+    }
+
+    .notification-item img {
+      width: 45px;
+      height: 45px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .notification-item .details {
+      flex-grow: 1;
+    }
+
+    .notification-item .details h6 {
+      margin: 0;
+      font-size: 15px;
+      color: #1e3a5f;
+    }
+
+    .notification-item .details small {
+      color: #6c757d;
+      font-size: 13px;
+    }
+
+    #notificationBtn {
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+    }
+  </style>
 </head>
 <body>
-
   <div id="sidebar">
     <div>
       <div class="brand">
@@ -51,14 +100,128 @@
   </div>
 
   <div class="main-content">
-    <h2>Welcome, <%= session && session.user ? session.user.firstName : 'User' %></h2>
-    <p class="text-muted fs-5">
-    Glad to have you back! Here you can easily request uniforms, view updates, and manage your personal details.
-    </p>
+    <div class="d-flex justify-content-between align-items-center">
+      <h2>Dashboard</h2>
+      <div class="position-relative me-2">
+        <button class="btn btn-link text-primary position-relative p-0" id="notificationBtn" data-bs-toggle="modal" data-bs-target="#notificationModal">
+          <i class="bi bi-bell-fill fs-4"></i>
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">3</span>
+        </button>
+      </div>
+    </div>
     <hr>
+
+    <div class="dashboard-cards">
+      <div class="card-stat card-blue text-center">
+        <i class="bi bi-list-ul mb-2"></i>
+        <h4><%= stats.totalRequests %></h4>
+        <p>Total Requests</p>
+      </div>
+      <div class="card-stat card-yellow text-center">
+        <i class="bi bi-hourglass-split mb-2"></i>
+        <h4><%= stats.pending %></h4>
+        <p>Pending</p>
+      </div>
+      <div class="card-stat card-green text-center">
+        <i class="bi bi-check-circle mb-2"></i>
+        <h4><%= stats.approved %></h4>
+        <p>Approved</p>
+      </div>
+      <div class="card-stat card-purple text-center">
+        <i class="bi bi-box-seam mb-2"></i>
+        <h4><%= stats.completed %></h4>
+        <p>Completed</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-md">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="notificationModalLabel"><i class="bi bi-bell-fill me-2"></i>Notifications</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="notificationList"></div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="/js/Logout.js"></script>
+
+  <script>
+    const notificationModal = document.getElementById('notificationModal');
+    const notificationCount = document.getElementById('notificationCount');
+
+    async function updateBadge() {
+      try {
+        const res = await fetch('/notifications');
+        const data = await res.json();
+        if (data.success) {
+          const unreadCount = data.notifications.filter(n => !n.isRead).length;
+          if (unreadCount > 0) {
+            notificationCount.textContent = unreadCount;
+            notificationCount.style.display = 'inline-block';
+          } else {
+            notificationCount.style.display = 'none';
+          }
+        }
+      } catch (err) {
+        console.error('Error updating notification badge:', err);
+        notificationCount.style.display = 'none';
+      }
+    }
+
+    updateBadge();
+
+    async function loadNotifications() {
+      try {
+        const res = await fetch('/notifications');
+        const data = await res.json();
+        const list = document.getElementById('notificationList');
+        list.innerHTML = '';
+
+        if (data.success && data.notifications.length > 0) {
+          data.notifications.forEach(n => {
+            list.innerHTML += `
+              <div class="notification-item d-flex align-items-center gap-2 mb-2 p-2 border rounded ${n.isRead ? 'bg-light' : 'bg-white'}" data-id="${n._id}">
+                <img src="${n.uniformImage || '/images/uniform.jpg'}" alt="Uniform" class="notification-img" width="50" height="50">
+                <div class="details flex-grow-1">
+                  <h6 class="mb-1">${n.message}</h6>
+                  <small class="text-muted">${new Date(n.createdAt).toLocaleString()}</small>
+                </div>
+                <button class="btn btn-sm btn-outline-secondary mark-unread-btn">${n.isRead ? 'Mark Unread' : 'Read'}</button>
+              </div>
+            `;
+          });
+
+          document.querySelectorAll('.mark-unread-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+              const notificationDiv = e.target.closest('.notification-item');
+              const id = notificationDiv.dataset.id;
+              try {
+                await fetch(`/notifications/${id}/read`, { method: 'PUT' });
+                const isCurrentlyRead = notificationDiv.classList.contains('bg-light');
+                notificationDiv.classList.toggle('bg-light', !isCurrentlyRead);
+                notificationDiv.classList.toggle('bg-white', isCurrentlyRead);
+                e.target.textContent = isCurrentlyRead ? 'Read' : 'Mark Unread';
+                updateBadge();
+              } catch (err) {
+                console.error('Error updating notification status:', err);
+              }
+            });
+          });
+        } else {
+          list.innerHTML = `<p class="text-center text-muted mt-3">No new notifications</p>`;
+        }
+      } catch (err) {
+        console.error('Error fetching notifications:', err);
+        document.getElementById('notificationList').innerHTML = `<p class="text-center text-danger mt-3">Failed to load notifications</p>`;
+      }
+    }
+
+    notificationModal.addEventListener('show.bs.modal', loadNotifications);
+  </script>
 </body>
 </html>
