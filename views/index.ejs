@@ -1,261 +1,141 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UMS | Uniform Management System</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <style>
-    * {
-      font-family: 'Poppins', sans-serif;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uniform Management System | UMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+      :root {
+        --primary: #0d6efd;
+        --text-light: #ffffff;
+      }
+      html, body {
+        height: 100%;
+        overflow: hidden;
+        font-family: "Poppins", sans-serif;
+      }
+      .hero {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--text-light);
+        background: url('/images/south.jpg') center center / cover no-repeat;
+        z-index: 1;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.8), rgba(6, 51, 118, 0.3));
+        z-index: -1;
+      }
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        max-width: 750px;
+        padding: 0 1.5rem;
+      }
+      .hero h1 {
+        font-weight: 700;
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+      .hero p {
+        font-size: 1.1rem;
+        max-width: 650px;
+        margin: 0 auto 35px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .btn {
+        border-radius: 50px;
+        padding: 12px 40px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+      }
+      .btn-primary {
+        background-color: var(--primary);
+        border: none;
+      }
+      .btn-primary:hover {
+        background-color: #0b5ed7;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(13, 110, 253, 0.4);
+      }
+      .btn-outline-light {
+        color: #fff;
+        border: 2px solid #fff;
+      }
+      .btn-outline-light:hover {
+        background-color: #fff;
+        color: #0d6efd;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .animate-fade-up {
+        opacity: 0;
+        animation: fadeUp 1s ease forwards;
+      }
+      .animate-fade-up:nth-child(1) { animation-delay: 0.1s; }
+      .animate-fade-up:nth-child(2) { animation-delay: 0.3s; }
+      .animate-fade-up:nth-child(3) { animation-delay: 0.5s; }
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.2rem;
+        }
+        .hero p {
+          font-size: 1rem;
+        }
+        .btn {
+          padding: 10px 28px;
+          font-size: 0.95rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
 
-    body {
-      background-color: #f7f9fc;
-      color: #1e3a5f;
-    }
-
-    /* Navbar */
-    .navbar {
-      background-color: #1e3a5f;
-    }
-    .navbar-brand {
-      color: #ffffff !important;
-      font-weight: 600;
-      font-size: 1.4rem;
-    }
-    .nav-link {
-      color: #cfd8e3 !important;
-      margin-right: 20px;
-      transition: 0.3s;
-    }
-    .nav-link:hover {
-      color: #ffffff !important;
-    }
-    .btn-login {
-      background-color: #2b4c7e;
-      border: none;
-      color: #fff;
-      font-weight: 500;
-      border-radius: 30px;
-      padding: 8px 20px;
-      transition: 0.3s;
-    }
-    .btn-login:hover {
-      background-color: #355d9b;
-      color: #fff;
-    }
-
-    /* Hero Section */
-    .hero {
-      background: 
-        linear-gradient(rgba(30, 58, 95, 0.75), rgba(43, 76, 126, 0.75)),
-        url("/images/south.jpg") center/cover no-repeat;
-      color: #fff;
-      text-align: center;
-      padding: 140px 0;
-    }
-    .hero h1 {
-      font-weight: 700;
-      font-size: 3rem;
-    }
-    .hero p {
-      font-size: 1.1rem;
-      color: #dce4ef;
-      max-width: 650px;
-      margin: 20px auto;
-    }
-    .hero .btn-primary {
-      background-color: #ffffff;
-      color: #1e3a5f;
-      border: none;
-      border-radius: 30px;
-      padding: 12px 30px;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-    .hero .btn-primary:hover {
-      background-color: #dce4ef;
-    }
-
-    /* Features */
-    .features {
-      padding: 80px 0;
-    }
-    .feature-card {
-      border: none;
-      background: #ffffff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 40px 25px;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-    .feature-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    }
-    .feature-icon {
-      color: #1e3a5f;
-      margin-bottom: 20px;
-    }
-
-    /* Contact Section */
-    #contact {
-      background-color: #edf1f8;
-      padding: 100px 0;
-    }
-    #contact h2 {
-      font-weight: 700;
-      margin-bottom: 20px;
-    }
-    #contact form {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      padding: 40px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-    #contact .form-control {
-      border-radius: 10px;
-      border-color: #cfd8e3;
-    }
-    #contact button {
-      background-color: #1e3a5f;
-      border: none;
-      border-radius: 30px;
-      padding: 10px 30px;
-      color: #fff;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-    #contact button:hover {
-      background-color: #2b4c7e;
-    }
-
-    /* Footer */
-    footer {
-      background-color: #1a2f4d;
-      color: #cfd8e3;
-      text-align: center;
-      padding: 40px 0;
-      font-size: 0.9rem;
-    }
-  </style>
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center" href="#">
-      <img src="/images/logo_college.png" alt="UMS Logo" width="40" height="40" class="me-2">
-      <span>UMS</span>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-      <ul class="navbar-nav align-items-center">
-        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-        <li class="nav-item"><a class="btn btn-login" href="/login">Login</a></li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  <!-- Hero Section -->
-  <section class="hero" id="home">
-    <div class="container">
-      <h1>Effortless Uniform Management for Modern Institutions</h1>
-      <p>Streamline uniform requests, track inventory, and manage distribution — all in one smart, easy-to-use system designed for schools and organizations.</p>
-      <a href="#" class="btn btn-primary mt-3">Get Started</a>
-      <a href="#" class="btn btn-primary mt-3">Register Account</a>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section id="features" class="features">
-    <div class="container">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">Powerful Features</h2>
-        <p class="text-muted">Everything you need to manage uniforms efficiently</p>
-      </div>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="feature-card text-center">
-            <div class="feature-icon">
-              <i data-lucide="boxes" width="48" height="48"></i>
-            </div>
-            <h5>Inventory Tracking</h5>
-            <p class="text-muted">Monitor stock levels and prevent shortages with real-time tracking.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card text-center">
-            <div class="feature-icon">
-              <i data-lucide="users" width="48" height="48"></i>
-            </div>
-            <h5>Staff & Student Management</h5>
-            <p class="text-muted">Assign, record, and manage uniform allocations effortlessly.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card text-center">
-            <div class="feature-icon">
-              <i data-lucide="bar-chart-3" width="48" height="48"></i>
-            </div>
-            <h5>Reports & Analytics</h5>
-            <p class="text-muted">Gain insights into usage patterns and inventory performance.</p>
-          </div>
-        </div>
+  <section class="hero">
+    <div class="hero-content text-center">
+      <h1 class="animate-fade-up" style="font-size: 3.5rem; line-height: 1.2;">
+        Simplify Your Uniform Requests
+      </h1>
+      <p class="animate-fade-up" style="animation-delay: 0.3s; font-size: 1.25rem; max-width: 750px; margin: 20px auto 25px;">
+        The Uniform Management System helps organizations efficiently manage
+        uniform distribution, requests, and inventory reducing manual work and saving time.
+      </p>
+      <p class="animate-fade-up" style="animation-delay: 0.45s; font-size: 1.15rem; color: rgba(255,255,255,0.85); max-width: 700px; margin: 0 auto 40px;">
+        Empower your team with a modern, automated, and user-friendly platform designed to keep every uniform request organized and effortless.
+      </p>
+      <div class="d-flex justify-content-center gap-3 animate-fade-up" style="animation-delay: 0.6s;">
+        <a href="/login" class="btn btn-primary btn-lg px-5">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Login
+        </a>
+        <a href="/register" class="btn btn-outline-light btn-lg px-5">
+          <i class="bi bi-person-plus me-2"></i>Create Account
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Contact Section -->
-  <section id="contact">
-    <div class="container text-center mb-4">
-      <h2>Contact Us</h2>
-      <p class="text-muted">Have questions? Get in touch with our support team.</p>
-    </div>
-    <div class="container">
-      <form>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Full Name" required>
-          </div>
-          <div class="col-md-6">
-            <input type="email" class="form-control" placeholder="Email Address" required>
-          </div>
-          <div class="col-12">
-            <input type="text" class="form-control" placeholder="Subject" required>
-          </div>
-          <div class="col-12">
-            <textarea class="form-control" rows="5" placeholder="Your Message" required></textarea>
-          </div>
-          <div class="col-12 text-center mt-3">
-            <button type="submit">Send Message</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container">
-      <p>© 2025 UMS | Uniform Management System. All Rights Reserved.</p>
-      <p>Email: support@umsystem.com | Phone: +63 900 123 4567</p>
-    </div>
-  </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    lucide.createIcons();
-  </script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
 </html>

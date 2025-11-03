@@ -296,7 +296,9 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Please complete the reCAPTCHA.' });
     }
 
-    const secretKey = '6LepSQAsAAAAABrrCqn4hMcko8LGjUISyyaFPgog'; 
+    const secretKey = '6LfUVQAsAAAAAB_dmvjq-sLNbAXaUI_QiHUnjbiv'; 
+    // DOMAIN 6LfUVQAsAAAAAB_dmvjq-sLNbAXaUI_QiHUnjbiv
+    // LOCALHOST 6LepSQAsAAAAABrrCqn4hMcko8LGjUISyyaFPgog 
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
 
     const response = await axios.post(verificationURL);
