@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const Uniform = require('../models/Uniform')
 const UniformRequest = require('../models/UniformRequest');
 const Notification = require('../models/Notification');
+const axios = require('axios');
 
 const OTP_EXPIRATION = 5 * 60 * 1000;
 
@@ -207,8 +208,9 @@ exports.register = async (req, res) => {
       existingUser.course = course;
       existingUser.gender = gender;
       await existingUser.save();
+
       await resendOTP(email, otp, 'register');
-      return res.status(200).json({ message: 'A new OTP has been sent to your email.' });
+      return res.status(200).json({ message: 'A new OTP has been sent to your email. Please verify to complete registration.' });
     }
 
     const user = new User({
@@ -227,26 +229,44 @@ exports.register = async (req, res) => {
 
     await user.save();
     await sendRegisterOTP(email, otp);
-    res.status(200).json({ message: 'OTP sent to your email. Please verify within 5 minutes.' });
+
+    res.status(200).json({ message: 'OTP sent to your email. Please verify your account to complete registration.' });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Registration failed. Please try again.' });
   }
 };
 
+
 exports.verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found.' });
-    if (user.isVerified) return res.status(400).json({ message: 'Account already verified.' });
-    if (user.verifyOTP !== otp) return res.status(400).json({ message: 'Invalid OTP.' });
-    if (user.verifyOTPExpires < Date.now()) return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'Account already verified. You can now log in.' });
+    }
+
+    if (user.verifyOTP !== otp) {
+      return res.status(400).json({ message: 'Invalid OTP.' });
+    }
+
+    if (user.verifyOTPExpires < Date.now()) {
+      return res.status(400).json({ message: 'OTP has expired. Please request a new one.' });
+    }
+
     user.isVerified = true;
     user.verifyOTP = undefined;
     user.verifyOTPExpires = undefined;
     await user.save();
+
     res.status(200).json({ message: 'Account successfully verified. You can now log in.' });
+
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: 'Verification failed. Please try again.' });
   }
 };
@@ -270,16 +290,32 @@ exports.resendRegisterOTP = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, "g-recaptcha-response": recaptchaResponse } = req.body;
+
+    if (!recaptchaResponse) {
+      return res.status(400).json({ message: 'Please complete the reCAPTCHA.' });
+    }
+
+    const secretKey = '6LepSQAsAAAAABrrCqn4hMcko8LGjUISyyaFPgog'; 
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${recaptchaResponse}`;
+
+    const response = await axios.post(verificationURL);
+    if (!response.data.success) {
+      return res.status(400).json({ message: 'reCAPTCHA verification failed. Please try again.' });
+    }
+
     if (email === 'superadmin@school.com' && password === 'superadmin123') {
       req.session.user = { role: 'admin', email };
       return res.status(200).json({ message: 'Welcome Super Admin!', redirect: '/admin/index' });
     }
+
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ message: 'User not found.' });
     if (!user.isVerified) return res.status(403).json({ message: 'Please verify your email before logging in.' });
+
     const isMatch = await user.comparePassword(password);
     if (!isMatch) return res.status(400).json({ message: 'Invalid email or password.' });
+
     req.session.user = {
       _id: user._id,
       firstName: user.firstName,
@@ -291,11 +327,13 @@ exports.login = async (req, res) => {
       gender: user.gender,
       role: user.role
     };
+
     res.status(200).json({
       message: 'Login successful.',
       redirect: '/user/index',
       user: req.session.user
     });
+
   } catch (error) {
     res.status(500).json({ message: 'Login failed. Please try again.' });
   }

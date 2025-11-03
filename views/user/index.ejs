@@ -8,63 +8,12 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
   <link rel="stylesheet" href="/css/Request.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <style>
-    .modal-header {
-      background: linear-gradient(90deg, #1e3a5f, #2b4c7e);
-      color: white;
-    }
-
-    .notification-item {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      transition: background-color 0.3s ease;
-    }
-
-    .notification-item:hover {
-      background-color: #f5f8ff;
-    }
-
-    .notification-item img {
-      width: 45px;
-      height: 45px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-    .notification-item .details {
-      flex-grow: 1;
-    }
-
-    .notification-item .details h6 {
-      margin: 0;
-      font-size: 15px;
-      color: #1e3a5f;
-    }
-
-    .notification-item .details small {
-      color: #6c757d;
-      font-size: 13px;
-    }
-
-    #notificationBtn {
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-
-    .badge {
-      font-size: 0.7rem;
-    }
-  </style>
 </head>
 <body>
   <div id="sidebar">
     <div>
       <div class="brand">
-        <img src="/images/logo.jpg" alt="UMS Logo" />
+        <img src="/images/logo_college.png" alt="UMS Logo" />
         <h5>Uniform Management System</h5>
       </div>
 
@@ -186,12 +135,11 @@
           data.notifications.forEach(n => {
             list.innerHTML += `
               <div class="notification-item d-flex align-items-center gap-2 mb-2 p-2 border rounded ${n.isRead ? 'bg-light' : 'bg-white'}" data-id="${n._id}">
-                <img src="${n.uniformImage || '/images/uniform.jpg'}" alt="Uniform" class="notification-img" width="50" height="50">
                 <div class="details flex-grow-1">
                   <h6 class="mb-1">${n.message}</h6>
                   <small class="text-muted">${new Date(n.createdAt).toLocaleString()}</small>
                 </div>
-                <button class="btn btn-sm btn-outline-secondary mark-unread-btn">${n.isRead ? 'Mark Unread' : 'Read'}</button>
+                <button class="btn btn-sm btn-outline-primary mark-unread-btn">${n.isRead ? 'Mark Unread' : 'Read'}</button>
               </div>
             `;
           });

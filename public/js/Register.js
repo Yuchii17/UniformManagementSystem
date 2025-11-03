@@ -252,3 +252,50 @@ registerForm.addEventListener("submit", async (e) => {
     registerBtn.disabled = false;
   }
 });
+
+  const passwordInput = document.getElementById('password');
+  const confirmInput = document.getElementById('confirmPassword');
+  const helper = document.getElementById('passwordHelper');
+  const matchHelper = document.getElementById('matchHelper');
+  const submitBtn = document.querySelector('form button[type="submit"]');
+
+  const rules = {
+    length: document.getElementById('ruleLength'),
+    upper: document.getElementById('ruleUpper'),
+    number: document.getElementById('ruleNumber'),
+    special: document.getElementById('ruleSpecial')
+  };
+
+  passwordInput.addEventListener('focus', () => { helper.style.display = 'block'; });
+  passwordInput.addEventListener('blur', () => { helper.style.display = 'none'; });
+
+  const validate = () => {
+    const pass = passwordInput.value;
+    const confirmPass = confirmInput.value;
+    let valid = true;
+
+    if (pass.length >= 8) rules.length.classList.replace('text-danger','text-success'); else { rules.length.classList.replace('text-success','text-danger'); valid = false; }
+    if (/[A-Z]/.test(pass)) rules.upper.classList.replace('text-danger','text-success'); else { rules.upper.classList.replace('text-success','text-danger'); valid = false; }
+    if (/\d/.test(pass)) rules.number.classList.replace('text-danger','text-success'); else { rules.number.classList.replace('text-success','text-danger'); valid = false; }
+    if (/[_!@#$%^&*]/.test(pass)) rules.special.classList.replace('text-danger','text-success'); else { rules.special.classList.replace('text-success','text-danger'); valid = false; }
+
+    if (confirmPass && pass === confirmPass) { matchHelper.style.display = 'none'; } else { matchHelper.style.display = 'block'; valid = false; }
+
+    submitBtn.disabled = !valid;
+  };
+
+  passwordInput.addEventListener('input', validate);
+  confirmInput.addEventListener('input', validate);
+
+  document.getElementById('togglePassword').addEventListener('click', () => {
+    const type = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = type;
+    document.getElementById('togglePassword').classList.toggle('bi-eye');
+    document.getElementById('togglePassword').classList.toggle('bi-eye-slash');
+  });
+  document.getElementById('toggleConfirm').addEventListener('click', () => {
+    const type = confirmInput.type === 'password' ? 'text' : 'password';
+    confirmInput.type = type;
+    document.getElementById('toggleConfirm').classList.toggle('bi-eye');
+    document.getElementById('toggleConfirm').classList.toggle('bi-eye-slash');
+  });

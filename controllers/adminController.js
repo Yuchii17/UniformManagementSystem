@@ -30,25 +30,81 @@ exports.dashboard = async (req, res) => {
       cancelledRequests
     };
 
-    const usersPerCourse = await User.aggregate([
+    let usersPerCourse = await User.aggregate([
       { $group: { _id: "$course", count: { $sum: 1 } } },
       { $sort: { _id: 1 } }
     ]);
+    if (!usersPerCourse.length) usersPerCourse = [{ _id: 'Dummy Course', count: 5 }];
 
-    const usersPerYear = await User.aggregate([
+    let usersPerYear = await User.aggregate([
       { $group: { _id: "$yearLevel", count: { $sum: 1 } } },
       { $sort: { _id: 1 } }
     ]);
+    if (!usersPerYear.length) usersPerYear = [{ _id: '1st Year', count: 10 }];
+
+    let uniformTrendCategory = await UniformRequest.aggregate([
+      { $match: { status: 'Completed' } },
+      {
+        $lookup: { from: 'uniforms', localField: 'uniform', foreignField: '_id', as: 'uniformDetails' }
+      },
+      { $unwind: '$uniformDetails' },
+      {
+        $group: {
+          _id: {
+            category: '$uniformDetails.category',
+            month: { $month: '$createdAt' },
+            year: { $year: '$createdAt' }
+          },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { '_id.year': 1, '_id.month': 1, '_id.category': 1 } }
+    ]);
+    if (!uniformTrendCategory.length) uniformTrendCategory = [{ _id: { category: 'PE', month: 1, year: 2025 }, count: 8 }];
+
+    let mostRequestedSizes = await UniformRequest.aggregate([
+      { $match: { status: 'Completed' } },
+      { $lookup: { from: 'uniforms', localField: 'uniform', foreignField: '_id', as: 'uniformDetails' } },
+      { $unwind: '$uniformDetails' },
+      { $group: { _id: '$uniformDetails.size', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+    if (!mostRequestedSizes.length) mostRequestedSizes = [{ _id: 'M', count: 7 }];
+
+    let completedPerMonth = await UniformRequest.aggregate([
+      { $match: { status: 'Completed' } },
+      { $group: { _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } }, count: { $sum: 1 } } },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+    if (!completedPerMonth.length) completedPerMonth = [{ _id: { year: 2025, month: 1 }, count: 5 }];
+
+    const monthlyRequests = await UniformRequest.aggregate([
+      { $group: { _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } }, count: { $sum: 1 } } },
+      { $sort: { "_id.year": 1, "_id.month": 1 } }
+    ]);
+
+    let futureTrends = [];
+    if (monthlyRequests.length >= 2) {
+      const last = monthlyRequests[monthlyRequests.length - 1].count;
+      const prev = monthlyRequests[monthlyRequests.length - 2].count;
+      const growth = last - prev;
+      for (let i = 1; i <= 3; i++) futureTrends.push(last + growth * i);
+    }
+    if (!futureTrends.length) futureTrends = [10, 15, 12];
 
     res.render('admin/index', { 
       session: req.session, 
       kpis, 
       usersPerCourse, 
-      usersPerYear 
+      usersPerYear, 
+      uniformTrendCategory, 
+      mostRequestedSizes, 
+      completedPerMonth, 
+      futureTrends 
     });
 
   } catch (error) {
-    console.error('❌ Error loading dashboard:', error);
+    console.error('Error loading dashboard:', error);
     res.status(500).send('Server Error');
   }
 };
@@ -352,6 +408,7 @@ exports.getHistory = async (req, res) => {
     const filter = { ...baseFilter, ...searchFilter };
 
     const totalRequests = await UniformRequest.countDocuments(filter);
+    const totalPages = Math.max(Math.ceil(totalRequests / limit), 1); 
 
     const requests = await UniformRequest.find(filter)
       .populate('user', 'firstName lastName email')
@@ -359,8 +416,6 @@ exports.getHistory = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-
-    const totalPages = Math.ceil(totalRequests / limit);
 
     res.render('admin/history', {
       requests,

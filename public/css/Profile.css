@@ -33,9 +33,7 @@
       width: 100px;
       height: 100px;
       border-radius: 50%;
-      background: #fff;
       padding: 6px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     }
 
     #sidebar .brand h5 {
@@ -131,17 +129,17 @@
   .card {
   border-radius: 15px;
   border: 1px solid #cddafc;
-}
+  }
 
-.card h4 {
-  color: #003366;
-}
+  .card h4 {
+    color: #003366;
+  }
 
-.btn-primary {
-  background-color: #003366;
-  border: none;
-}
+  .btn-primary {
+    background-color: #003366;
+    border: none;
+  }
 
-.btn-primary:hover {
-  background-color: #002b55;
-}
+  .btn-primary:hover {
+    background-color: #002b55;
+  }
